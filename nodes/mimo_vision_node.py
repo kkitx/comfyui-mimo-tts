@@ -82,9 +82,11 @@ class MiMoVisionNode:
                 "video": ("VIDEO",),
                 "audio": ("AUDIO",),
                 "text": ("STRING", {"multiline": True, "default": "", "tooltip": "中译英/英译时输入要翻译的文本，可连接 ShowText 或其他节点的 STRING 输出"}),
-                "temperature": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 2.0, "step": 0.1}),
                 "api_key": ("STRING", {"default": "", "tooltip": "留空读config.env"}),
                 "api_base": ("STRING", {"default": "", "tooltip": "留空读config.env"}),
+            },
+            "hidden": {
+                "temperature": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 2.0, "step": 0.1}),
             },
         }
 
