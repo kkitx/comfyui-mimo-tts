@@ -93,9 +93,19 @@ class MiMoVisionNode:
     FUNCTION = "run"
     CATEGORY = "MiMo TTS"
 
-    def run(self, model, prompt_template, custom_prompt, image=None, video=None, audio=None,
-            text="", temperature=0.6, api_key="", api_base=""):
-        key, base = get_api_config(str(api_key) if api_key else "", str(api_base) if api_base else "")
+    def run(self, **kwargs):
+        model = kwargs.get("model", "mi/mimo-v2.5")
+        prompt_template = kwargs.get("prompt_template", "图片反推")
+        custom_prompt = kwargs.get("custom_prompt", "")
+        image = kwargs.get("image", None)
+        video = kwargs.get("video", None)
+        audio = kwargs.get("audio", None)
+        text = str(kwargs.get("text", ""))
+        temperature = float(kwargs.get("temperature", 0.6) or 0.6)
+        api_key = str(kwargs.get("api_key", ""))
+        api_base = str(kwargs.get("api_base", ""))
+
+        key, base = get_api_config(api_key.strip(), api_base.strip())
         if not key:
             return ("错误: 请填入api_key或设置config.env",)
 
