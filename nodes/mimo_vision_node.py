@@ -12,6 +12,8 @@ PROMPT_TEMPLATES = {
     "图片反推": "请仔细观察这张图片，用英文写出详细的画面描述（prompt），适合用于AI图片生成。包括主体、风格、构图、光影、色调等细节。",
     "视频反推": "请仔细观看这段视频，用英文写出详细的画面描述（prompt），适合用于AI视频生成。包括场景、动作、运镜、风格等细节。",
     "音频描述": "请仔细聆听这段音频，用中文描述你听到的内容，包括语音内容、背景音、情绪等。（需要模型支持音频输入）",
+    "中译英": "请将以下中文提示词翻译成自然流畅的英文，保持提示词风格，适合用于AI图片/视频生成：",
+    "英译中": "Please translate the following English prompt into natural Chinese, keeping the prompt style suitable for AI image/video generation:",
     "自定义": "",
 }
 
@@ -79,6 +81,7 @@ class MiMoVisionNode:
                 "image": ("IMAGE",),
                 "video": ("VIDEO",),
                 "audio": ("AUDIO",),
+                "text": ("STRING", {"multiline": True, "default": "", "tooltip": "中译英/英译时输入要翻译的文本，可连接 ShowText 或其他节点的 STRING 输出"}),
                 "api_key": ("STRING", {"default": "", "tooltip": "留空读config.env"}),
                 "api_base": ("STRING", {"default": "", "tooltip": "留空读config.env"}),
                 "temperature": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 2.0, "step": 0.1}),
@@ -91,14 +94,21 @@ class MiMoVisionNode:
     CATEGORY = "MiMo TTS"
 
     def run(self, model, prompt_template, custom_prompt, image=None, video=None, audio=None,
-            api_key="", api_base="", temperature=0.6):
+            text="", api_key="", api_base="", temperature=0.6):
         key, base = get_api_config(api_key, api_base)
         if not key:
             return ("错误: 请填入api_key或设置config.env",)
 
-        text = custom_prompt if prompt_template == "自定义" else PROMPT_TEMPLATES[prompt_template]
+        base_text = custom_prompt if prompt_template == "自定义" else PROMPT_TEMPLATES[prompt_template]
 
-        content_parts = [{"type": "text", "text": text}]
+        if prompt_template in ("中译英", "英译中"):
+            if not text.strip():
+                return ("错误: 中译英/英译中 需要输入要翻译的文本",)
+            full_text = f"{base_text}\n\n{text}"
+        else:
+            full_text = base_text
+
+        content_parts = [{"type": "text", "text": full_text}]
 
         if image is not None:
             b64 = encode_image_b64(image)
@@ -121,7 +131,7 @@ class MiMoVisionNode:
                 "audio_url": {"url": f"data:audio/wav;base64,{b64}"}
             })
 
-        if len(content_parts) == 1:
+        if len(content_parts) == 1 and prompt_template not in ("中译英", "英译中"):
             return ("错误: 请至少连接一个 image、video 或 audio 输入",)
 
         messages = [
