@@ -82,9 +82,9 @@ class MiMoVisionNode:
                 "video": ("VIDEO",),
                 "audio": ("AUDIO",),
                 "text": ("STRING", {"multiline": True, "default": "", "tooltip": "中译英/英译时输入要翻译的文本，可连接 ShowText 或其他节点的 STRING 输出"}),
+                "temperature": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 2.0, "step": 0.1}),
                 "api_key": ("STRING", {"default": "", "tooltip": "留空读config.env"}),
                 "api_base": ("STRING", {"default": "", "tooltip": "留空读config.env"}),
-                "temperature": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 2.0, "step": 0.1}),
             },
         }
 
@@ -94,15 +94,15 @@ class MiMoVisionNode:
     CATEGORY = "MiMo TTS"
 
     def run(self, model, prompt_template, custom_prompt, image=None, video=None, audio=None,
-            text="", api_key="", api_base="", temperature=0.6):
-        key, base = get_api_config(api_key, api_base)
+            text="", temperature=0.6, api_key="", api_base=""):
+        key, base = get_api_config(str(api_key) if api_key else "", str(api_base) if api_base else "")
         if not key:
             return ("错误: 请填入api_key或设置config.env",)
 
         base_text = custom_prompt if prompt_template == "自定义" else PROMPT_TEMPLATES[prompt_template]
 
         if prompt_template in ("中译英", "英译中"):
-            if not text.strip():
+            if not str(text).strip():
                 return ("错误: 中译英/英译中 需要输入要翻译的文本",)
             full_text = f"{base_text}\n\n{text}"
         else:
