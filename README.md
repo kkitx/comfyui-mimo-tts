@@ -1,6 +1,6 @@
 # ComfyUI MiMo TTS
 
-A ComfyUI speech synthesis plugin based on Xiaomi MiMo TTS API. Supports preset voices, voice cloning, voice design, script-based batch dubbing, and audio concatenation.
+A ComfyUI speech synthesis plugin based on Xiaomi MiMo TTS API. Supports preset voices, voice cloning, voice design, script-based batch dubbing, audio concatenation, and multimodal prompt reverse engineering.
 
 ## Features
 
@@ -9,6 +9,7 @@ A ComfyUI speech synthesis plugin based on Xiaomi MiMo TTS API. Supports preset 
 - **MiMo Voice Design** - Describe the voice style in text
 - **MiMo Script Player** - Batch generate multi-character dialogues from JSON scripts
 - **MiMo Audio Concat** - Merge multiple audio clips into one
+- **MiMo Vision** - Multimodal prompt reverse engineering for images, videos, and audio
 
 ## Installation
 
@@ -76,6 +77,20 @@ Input a JSON script:
 
 Connect multiple AUDIO outputs together. Supports up to 5 inputs. Different sample rates are automatically resampled.
 
+### MiMo Vision
+
+Multimodal prompt reverse engineering using MiMo's vision capabilities. Supports images, videos, and audio inputs.
+
+| Parameter | Description |
+|-----------|-------------|
+| model | Model: mi/mimo-v2.5 (multimodal) or mi/mimo-v2.5-pro (text only) |
+| prompt_template | Preset: Image Reverse / Video Reverse / Audio Description / Custom |
+| custom_prompt | Custom prompt text (used when "Custom" is selected) |
+| image | Connect an IMAGE input for image-to-prompt |
+| video | Connect a VIDEO input for video-to-prompt |
+| audio | Connect an AUDIO input for audio description |
+| temperature | Generation temperature (default: 0.6) |
+
 ## Usage Examples
 
 ### Basic
@@ -96,6 +111,30 @@ MiMo TTS (Brother)  ──→ audio_2 ──┘
 
 ```
 Load Audio → MiMo Voice Clone → PreviewAudio
+```
+
+### Image Prompt Reverse Engineering
+
+```
+Load Image → MiMo Vision (Image Reverse) → ShowText
+```
+
+### Video Prompt Reverse Engineering
+
+```
+Load Video → MiMo Vision (Video Reverse) → ShowText
+```
+
+### Audio Description
+
+```
+MiMo TTS → [audio] → MiMo Vision (Audio Description) → ShowText
+```
+
+### TTS → Vision Pipeline
+
+```
+MiMo TTS → MiMo Vision (Audio Description) → ShowText
 ```
 
 ## Requirements
