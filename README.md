@@ -10,6 +10,7 @@ A ComfyUI speech synthesis plugin based on Xiaomi MiMo TTS API. Supports preset 
 - **MiMo Script Player** - Batch generate multi-character dialogues from JSON scripts
 - **MiMo Audio Concat** - Merge multiple audio clips into one
 - **MiMo Vision** - Multimodal prompt reverse engineering for images, videos, and audio
+- **Prompt Translation** - Chinese-English translation for prompts
 
 ## Installation
 
@@ -84,11 +85,12 @@ Multimodal prompt reverse engineering using MiMo's vision capabilities. Supports
 | Parameter | Description |
 |-----------|-------------|
 | model | Model: mi/mimo-v2.5 (multimodal) or mi/mimo-v2.5-pro (text only) |
-| prompt_template | Preset: Image Reverse / Video Reverse / Audio Description / Custom |
+| prompt_template | Preset: Image Reverse / Video Reverse / Audio Description / Chinese to English / English to Chinese / Custom |
 | custom_prompt | Custom prompt text (used when "Custom" is selected) |
 | image | Connect an IMAGE input for image-to-prompt |
 | video | Connect a VIDEO input for video-to-prompt |
 | audio | Connect an AUDIO input for audio description |
+| text | Text to translate (for Chinese-English translation) |
 | temperature | Generation temperature (default: 0.6) |
 
 ## Usage Examples
@@ -135,6 +137,16 @@ MiMo TTS → [audio] → MiMo Vision (Audio Description) → ShowText
 
 ```
 MiMo TTS → MiMo Vision (Audio Description) → ShowText
+```
+
+### Prompt Translation
+
+```
+[中文提示词] → MiMo Vision (中译英) → [英文提示词] → SD/Flux
+```
+
+```
+[English prompt] → MiMo Vision (英译中) → [中文提示词] → ShowText
 ```
 
 ## Requirements
